@@ -1537,7 +1537,11 @@ STATIC int prepare_candidates(SCALAR *V, PRIMME_INT ldV, SCALAR *W,
    while (1) {
       /* Recompute flags in iev(*blockSize:*blockSize+blockNormsize) */
       for (i = *blockSize; i < *blockSize+blockNormsSize; i++) {
+<<<<<<< HEAD
          flagsBlock[i-*blockSize] = flags[iev[i]];
+=======
+         flagsBlock[i - *blockSize] = flags[iev[i]];
+>>>>>>> bf068f4ec12e6a39249e01ee940ddb5488a88419
          global_idx[i - *blockSize] = numLocked + iev[i];
       }
       CHKERR(check_convergence_Sprimme(X ? &X[(*blockSize) * ldV] : NULL, ldV,
