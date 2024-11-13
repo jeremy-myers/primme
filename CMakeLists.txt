@@ -52,6 +52,11 @@ if (HAVE_LIB_M)
   set(EXTRA_LIBS ${EXTRA_LIBS} m) 
 endif()
 
+if (PRIMME_ENABLE_OPENMP)
+  message("-- PRIMME Enable OpenMP: TRUE")
+  find_package(OpenMP REQUIRED)
+endif()
+
 add_library(primme)
 set(primme_MAJOR_VERSION 3)
 set(primme_MINOR_VERSION 9)
@@ -63,6 +68,7 @@ target_include_directories(primme
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/include>
 )
 target_link_libraries(primme PUBLIC LAPACK::LAPACK BLAS::BLAS ${EXTRA_LIBS})
+target_link_libraries(primme PRIVATE OpenMP::OpenMP_C)
 
 add_subdirectory(include)
 add_subdirectory(src)
