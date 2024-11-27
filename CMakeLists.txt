@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.18)
 
 # If not set by the user, make a release build.
-if (NOT CMAKE_BUILD_TYPE)
-  set (CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
 endif()
 message(STATUS "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 
@@ -20,10 +20,10 @@ option(WITH_FORTRAN "Build PRIMME Fortran 90 tests" OFF)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
-if (POLICY CMP0042)
+if(POLICY CMP0042)
   # enable MACOSX_RPATH by default
-  cmake_policy (SET CMP0042 NEW)
-endif ()
+  cmake_policy(SET CMP0042 NEW)
+endif()
 
 # Find our extra modules
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
@@ -34,25 +34,25 @@ include(GNUInstallDirs)
 set(PRIMME_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/primme")
 set(PRIMME_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/primme")
 
-if (WITH_HALF)
+if(WITH_HALF)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DPRIMME_WITH_HALF")
 endif()
-if (WITH_FLOAT)
+if(WITH_FLOAT)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DPRIMME_WITH_FLOAT")
 endif()
 
 find_package(BLAS REQUIRED)
-if (NOT TARGET LAPACK::LAPACK)
+if(NOT TARGET LAPACK::LAPACK)
   find_package(LAPACK REQUIRED)
 endif()
 primme_test_fortran_underscore()
 
-CHECK_LIBRARY_EXISTS(m sin "" HAVE_LIB_M)                                                                                    
-if (HAVE_LIB_M)
-  set(EXTRA_LIBS ${EXTRA_LIBS} m) 
+CHECK_LIBRARY_EXISTS(m sin "" HAVE_LIB_M)
+if(HAVE_LIB_M)
+  set(EXTRA_LIBS ${EXTRA_LIBS} m)
 endif()
 
-if (PRIMME_ENABLE_OPENMP)
+if(PRIMME_ENABLE_OPENMP)
   message("-- PRIMME Enable OpenMP: TRUE")
   find_package(OpenMP REQUIRED)
 endif()
@@ -63,12 +63,14 @@ set(primme_MINOR_VERSION 9)
 set(primme_VERSION ${primme_MAJOR_VERSION}.${primme_MINOR_VERSION})
 target_include_directories(primme
   PUBLIC
-    $<INSTALL_INTERFACE:${PRIMME_INSTALL_INCLUDEDIR}>
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/include>
+  $<INSTALL_INTERFACE:${PRIMME_INSTALL_INCLUDEDIR}>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/include>
 )
 target_link_libraries(primme PUBLIC LAPACK::LAPACK BLAS::BLAS ${EXTRA_LIBS})
-target_link_libraries(primme PRIVATE OpenMP::OpenMP_C)
+if(PRIMME_ENABLE_OPENMP AND OpenMP_FOUND)
+  target_link_libraries(primme PRIVATE OpenMP::OpenMP_C)
+endif()
 
 add_subdirectory(include)
 add_subdirectory(src)
@@ -88,11 +90,11 @@ write_basic_package_version_file(
   ${PROJECT_BINARY_DIR}/primme-config-version.cmake
   VERSION ${PACKAGE_VERSION}
   COMPATIBILITY SameMajorVersion
-  )
+)
 install(EXPORT primmeTargets DESTINATION "${PRIMME_INSTALL_CMAKEDIR}")
 install(
   FILES
-    "${PROJECT_BINARY_DIR}/primme-config.cmake"
-    "${PROJECT_BINARY_DIR}/primme-config-version.cmake"
+  "${PROJECT_BINARY_DIR}/primme-config.cmake"
+  "${PROJECT_BINARY_DIR}/primme-config-version.cmake"
   DESTINATION "${PRIMME_INSTALL_CMAKEDIR}"
 )
